@@ -1,0 +1,250 @@
+<html>
+<head>
+  <title>Daily Budget Tool</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Public+Sans&display=swap');
+   body {
+            margin: 20px 0px;
+            background-color:#ffffff;
+   font-family: "Geist Mono", serif;
+   display:flex;
+   overflow-x: hidden; /* Prevent horizontal scrolling */
+    flex-direction: column; /* Adjust direction for mobile readability */
+        }
+        .container {
+            margin: 0 auto;
+          background-color:#f2e6ff;
+          border:solid #000000 5px;
+          border-radius:30px;
+          padding:5px 20px;
+          box-sizing: border-box;
+        }
+input {
+  padding:10px;
+  background-color: #ffe6e6;
+  border:solid #ffffff 2px;
+}
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .output1 {
+            background-color: #ccffcc;
+          padding:10px;
+          border: 2px solid #ffffff;
+}
+          .output {
+            background-color: #ddccff;
+            text-align: right;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            border: none;
+            padding: 8px;
+            text-align: center;
+        }
+        table th {
+            font-size:20px;
+        }
+
+.pink-button {
+    color: #000000;
+  font-family: "Geist Mono", serif;
+    border: 2px solid #000000;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.pink-button:hover {
+    background-color: #ffccf2;
+}
+
+
+.info-box {
+  max-width:100%;
+    margin-top: 0px;
+    padding: 15px;
+    background-color: #ffccf2;
+    color: #000;
+    font-size: 16px;
+    transition: opacity 0.3s ease;
+}
+
+.hidden {
+    display: none;
+}
+
+</style>
+  
+</head>
+
+   
+
+<div class="container">
+        <h1>Daily Budget Tool</h1>
+  
+  
+              <button id="toggleButton" class="pink-button">⬇ How do I use this? ⬇</button><div id="infoBox" class="info-box hidden">
+Enter your monthly income and expenses, and I will calculate your daily spending limit, helping you to stay on top of your budget. At the end of each day, log your expenses to see your updated balance - everything adjusts automatically to keep you on track. You can also log specific upcoming expenses to help you stay on track.
+<br><br>
+What about months that are under 31 days? Consider those extra days a bonus. And if you occasionally overspend, you can use this tracker to help you plan on making it up on another day.        </div>  
+
+  <h2>Monthly Expenses</h2>
+
+        <div class="input-group">
+            <label for="total">Total Income:</label>
+            <input type="number" id="total" oninput="calculateExpenses()">
+        </div>
+
+        <div class="input-group">
+            <label for="expense1">Rent</label>
+            <input type="number" id="expense1" oninput="calculateExpenses()">
+        </div>
+
+        <div class="input-group">
+            <label for="expense2">Utilities</label>
+            <input type="number" id="expense2" oninput="calculateExpenses()">
+        </div>
+
+        <div class="input-group">
+            <label for="expense3">Phone</label>
+            <input type="number" id="expense3" oninput="calculateExpenses()">
+        </div>
+     
+     <div class="input-group">
+            <label for="expense4">Internet</label>
+            <input type="number" id="expense4" oninput="calculateExpenses()">
+        </div>
+<div class="input-group">
+            <label for="expense5">Car Payment / Other Bills</label>
+            <input type="number" id="expense5" oninput="calculateExpenses()">
+        </div>
+     <div class="input-group">
+            <label for="expense6">Savings</label>
+            <input type="number" id="expense6" oninput="calculateExpenses()">
+        </div>
+     
+        <div class="input-group">
+            <label>Total Expenses:</label>
+            <div id="totalExpenses" class="output1">0.00</div>
+        </div>
+
+        <div class="input-group">
+            <label>Disposable Income:</label>
+            <div id="disposableIncome" class="output1">0.00</div>
+        </div>
+
+        <div class="input-group">
+            <label>Daily Spend Limit:</label>
+            <div id="dailySpendLimit" class="output1">0.00</div>
+        </div>
+
+        <h2>Daily Expense Log</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Day</th>
+                    <th>Expenditure</th>
+                    <th>Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+              <script>document.getElementById('toggleButton').addEventListener('click', function () {
+    const infoBox = document.getElementById('infoBox');
+    if (infoBox.classList.contains('hidden')) {
+        infoBox.classList.remove('hidden');
+    } else {
+        infoBox.classList.add('hidden');
+    }
+}); 
+
+
+function saveData() {
+            const data = {
+                total: document.getElementById('total').value,
+                expense1: document.getElementById('expense1').value,
+                expense2: document.getElementById('expense2').value,
+                expense3: document.getElementById('expense3').value,
+               expense4: document.getElementById('expense4').value,
+               expense5: document.getElementById('expense5').value,
+              expense6: document.getElementById('expense6').value,
+                dailyExpenses: Array.from({ length: 31 }, (_, i) => document.getElementById(`day${i + 1}`).value || "")
+            };
+            localStorage.setItem('incomeExpenseData', JSON.stringify(data));
+        }
+
+        function loadData() {
+            const savedData = JSON.parse(localStorage.getItem('incomeExpenseData'));
+            if (savedData) {
+                document.getElementById('total').value = savedData.total || "";
+                document.getElementById('expense1').value = savedData.expense1 || "";
+                document.getElementById('expense2').value = savedData.expense2 || "";
+                document.getElementById('expense3').value = savedData.expense3 || "";
+              
+ document.getElementById('expense4').value = savedData.expense4 || "";
+              
+              document.getElementById('expense5').value = savedData.expense5 || "";
+              
+               document.getElementById('expense6').value = savedData.expense6 || "";
+               
+                savedData.dailyExpenses.forEach((value, index) => {
+                    document.getElementById(`day${index + 1}`).value = value || "";
+                });
+                calculateExpenses();
+            }
+        }
+
+        function calculateExpenses() {
+            const total = parseFloat(document.getElementById('total').value) || 0;
+            const expense1 = parseFloat(document.getElementById('expense1').value) || 0;
+            const expense2 = parseFloat(document.getElementById('expense2').value) || 0;
+            const expense3 = parseFloat(document.getElementById('expense3').value) || 0;
+          const expense4 = parseFloat(document.getElementById('expense4').value) || 0;
+          const expense5 = parseFloat(document.getElementById('expense5').value) || 0;
+          const expense6 = parseFloat(document.getElementById('expense6').value) || 0;
+
+            const totalExpenses = expense1 + expense2 + expense3 + expense4 + expense5 + expense6;
+            const disposableIncome = total - totalExpenses;
+            const dailySpendLimit = disposableIncome / 31;
+
+            document.getElementById('totalExpenses').innerText = totalExpenses.toFixed(2);
+            document.getElementById('disposableIncome').innerText = disposableIncome.toFixed(2);
+            document.getElementById('dailySpendLimit').innerText = dailySpendLimit.toFixed(2);
+
+            calculateDailyBalance(dailySpendLimit);
+            saveData();
+        }
+
+        function calculateDailyBalance(dailySpendLimit) {
+            const days = 31;
+            let runningBalance = 0;
+            for (let i = 1; i <= days; i++) {
+                const dayExpense = parseFloat(document.getElementById(`day${i}`).value) || 0;
+                runningBalance += dailySpendLimit - dayExpense;
+                document.getElementById(`balance${i}`).innerText = runningBalance.toFixed(2);
+            }
+        }
+
+        window.onload = loadData;
+for (let i = 1; i <= 31; i++) {
+                        document.write(`
+                            <tr>
+                                <td>${i}</td>
+                                <td><input type="number" id="day${i}" oninput="calculateExpenses()"></td>
+                                <td id="balance${i}" class="output">0.00</td>
+                            </tr>
+                        `);
+                    }</script>
+  
+</html>
